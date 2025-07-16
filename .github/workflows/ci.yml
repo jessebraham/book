@@ -9,14 +9,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: dtolnay/rust-toolchain@v1
         with:
           toolchain: nightly
           components: rust-docs
 
-      - uses: jontze/action-mdbook@v2
+      - uses: jontze/action-mdbook@v4
         with:
           token: ${{secrets.GITHUB_TOKEN}}
           use-mermaid: true
@@ -27,10 +27,9 @@ jobs:
             https://raw.githubusercontent.com/rust-lang/rust/master/src/tools/linkchecker/linkcheck.sh
           # Cannot use --all here because of the generated redirect pages aren't available.
           sh linkcheck.sh book
-  
-      
+
       - name: Deploy
-        if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+        if: ${{ github.repository == 'esp-rs/book' && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) }}
         uses: appleboy/scp-action@v0.1.7
         with:
           host: docs.espressif.com
